@@ -94,6 +94,10 @@ export default {
     stopNavigator() {
       this.thisVideo.srcObject.getTracks()[0].stop();
     },
+    deleteImage(){
+      var _this = this;
+      _this.imgSrc = '';
+    },
     // base64转文件，此处没用到
     dataURLtoFile(dataurl, filename) {
       var arr = dataurl.split(",");

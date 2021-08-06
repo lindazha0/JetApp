@@ -5,6 +5,7 @@
       <button @click="stopNavigator()">关闭摄像头</button>
       <button @click="setImage()">拍照</button>
       <button @click="dataURLtoFile(imgSrc, 'newImg')">上传</button>
+      <button @click="deleteImage()">删除</button>
     </div>
     <div class="box">
     <video id="videoCamera" :width="videoWidth" :height="videoHeight" autoplay></video>

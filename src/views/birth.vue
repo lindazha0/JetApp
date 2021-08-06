@@ -2,6 +2,8 @@
   <!-- <div id=background> -->
   <div id='center'>
     <h1>Happy Birthday! Lottery Time!<br/>Please choose a gift!</h1>
+    <button @click="submit">Submit</button>
+    <br/>
   <div class="sudoku_row">
     <div
       class="sudoku_item"
@@ -13,8 +15,6 @@
       <img :src="gift" width="90"  style="border-radius:20px"/>
       <!-- {{ sudoku.name }} -->
     </div>
-    <br/>
-    <button @click="submit">Submit</button>
   </div>
   </div>
   <!-- </div> -->
