@@ -1,25 +1,19 @@
 <template>
   <div class="SongList">
   <!-- //用v-for循环渲染缩略图 -->
-     <div class="covers" >
-        <div class="cover" v-for="(img,index) in imgs" :key='img'>
-          <img :src="img.src" width="90%" class="min" @click="ZoomIn(index)" alt="">
+     <div class='covers'>
+        <div  v-for="(img, _) in snacks" :key='img'>
+          <img :style="{ width: '400px' }" :src="img.img" >
+          <!-- {{img}} -->
         </div>
        </div>
-  <!-- //渲染放大后的图 -->
-       <div class="max" >
-            <div @click="ZoomOut"  v-for="(img,index) in imgs" :key='img' :class="[index===ShowIndex?'active':'None']" ><img :src="img.src" width="100%"></div>
-            <!-- //放大后图片下方的导航图 -->
-            <div class="small">
-                <div :class="[{'smallActive':index===ShowIndex},'cover-small']" v-for="(img,index) in imgs" :key='img' @click="select(index)" ><img :src="img.src" width="90%"></div>
-            </div>
-        </div>
+
   </div>
 </template>
 
 <style scoped>
     .SongList{
-        width: 40%;
+        width: 100%;
     }
     .covers{
         display: flex;
@@ -33,8 +27,8 @@
         margin: 10px 0;
     }
     .min{
-        border-radius: 10px;
-        cursor: zoom-in;
+        /* border-radius: 10px; */
+        /* cursor: zoom-in; */
     }
     .max{
         cursor: zoom-out;
@@ -71,29 +65,32 @@
 
 <script>
     export default {
-        name: "SongList",
         data:function() {
             return {
                 ShowIndex:0,
                 display: 'none',
                 MinDisplay:'flex',
                 // Vue模板中使用v-for循环渲染图片时不能直接使用图片文件本地位置
-                imgs:[
-                    {"src":require("../assets/gift.png")},
-                    {"src":require("../assets/gift.png")},
-                    {"src":require("../assets/gift.png")},
-                    {"src":require("../assets/gift.png")},
-                    {"src":require("../assets/gift.png")},
-                    {"src":require("../assets/gift.png")},
-                    {"src":require("../assets/gift.png")},
-                    {"src":require("../assets/gift.png")},
-                    {"src":require("../assets/gift.png")},
-                   
+                snacks:[
+                    {img: require("../assets/gift.png")},
                 ]
-
             };
         },
+        mounted(){
+            this.initSnacks();
+        },
         methods:{
+            initSnacks() {
+            var requireModule = require.context("../assets/snacks/", false, /\.jpg$/);
+            
+            this.snacks = [];
+            for (var i = 0; i < requireModule.keys().length; i++) {
+                this.snacks.push({
+                    img: require("../assets/snacks/" + requireModule.keys()[i].substr(2, requireModule.keys()[i].length))
+                });
+            }
+            console.log(this.snacks)
+            },
             ZoomIn(i){
                this.display='block';
                 this.MinDisplay='none';
