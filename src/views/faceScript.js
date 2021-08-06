@@ -28,15 +28,6 @@ export default {
       // 一些浏览器实现了部分mediaDevices，我们不能只分配一个对象
       // 使用getUserMedia，因为它会覆盖现有的属性。
       // 这里，如果缺少getUserMedia属性，就添加它。
-    //   navigator.mediaDevices.getUserMedia({
-    //     video: true,
-    //     video: { facingMode: "environment"}
-    // }).then(function(stream) {
-    //     console.log(stream);
-    // }).catch(function(err) {
-    //     console.log(err);
-    // });
-    
       if (navigator.mediaDevices.getUserMedia === undefined) {
         navigator.mediaDevices.getUserMedia = function(constraints) {
           // 首先获取现存的getUserMedia(如果存在)
@@ -97,6 +88,7 @@ export default {
       // 获取图片base64链接
       var image = this.thisCancas.toDataURL("image/png");
       _this.imgSrc = image;//赋值并预览图片
+      console.log(image)
     },
     // 关闭摄像头
     stopNavigator() {
@@ -112,7 +104,9 @@ export default {
       while (n--) {
         u8arr[n] = bstr.charCodeAt(n);
       }
-      return new File([u8arr], filename, { type: mime });
+      var file = new File([u8arr], filename, { type: mime });
+      console.log(file);
+      return file;
     }
   }
 };

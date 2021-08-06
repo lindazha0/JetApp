@@ -1,6 +1,7 @@
 <template>
+  <!-- <div id=background> -->
   <div id='center'>
-    <h1>Happy Birthday! Lottory Time!<br/>Please choose a gift!</h1>
+    <h1>Happy Birthday! Lottery Time!<br/>Please choose a gift!</h1>
   <div class="sudoku_row">
     <div
       class="sudoku_item"
@@ -16,6 +17,7 @@
     <button @click="submit">Submit</button>
   </div>
   </div>
+  <!-- </div> -->
 
 
 </template>  
@@ -94,15 +96,21 @@ export default {
 };
 </script>  
 
-<style >
+<style scoped>
+h1 {
+  color: #2c3e50;
+  -webkit-text-stroke: 0.5px aliceblue;
+}
+
 #center {
   text-align: center;
+  background: url("../assets/pika.png");
 }
 .sudoku_row {
   text-align: center;
   position: relative;
   display: flex;
-  width: 30%;
+  width: 300px;
   margin: auto;
   justify-content: center;
   flex-wrap: wrap;
@@ -125,10 +133,8 @@ export default {
   margin-bottom: 5px;
 }
 #background{
-/* background:url("https://tse1-mm.cn.bing.net/th/id/R-C.33674725d9ae34f86e3835ae30b20afe?rik=Pb3C9e5%2b%2b3a9Vw&riu=http%3a%2f%2fwww.desktx.com%2fd%2ffile%2fwallpaper%2fscenery%2f20180626%2f4c8157d07c14a30fd76f9bc110b1314e.jpg&ehk=9tpmnrrRNi0eBGq3CnhwvuU8PPmKuy1Yma0zL%2ba14T0%3d&risl=&pid=ImgRaw&r=0"); */
-/* background: url("../assets/gift.png"); */
-width:100%;
-height:100%;
+/* background: url("../assets/pika.png"); */
+/* width:80%; */
 position:fixed;
 background-size:100% 100%;
 }
