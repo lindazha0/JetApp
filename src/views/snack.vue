@@ -1,11 +1,21 @@
 <template>
   <div class="SongList">
   <!-- //用v-for循环渲染缩略图 -->
-     <div class='covers'>
-        <div  v-for="(img, _) in snacks" :key='img'>
-          <img :style="{ width: '400px' }" :src="img.img" >
-          <!-- {{img}} -->
+     <div class='covers'  :style="{display:MinDisplay}">
+        <div class='cover' v-for="(img, index) in snacks" :key='img'>
+          <img :style="{ width: '90%' }" :src="img.img" class='min' @click="ZoomIn(index)" alt=''>
         </div>
+       </div>
+       <div :style="{display:display}">
+           <div class="small">
+               <div :class="{'smallActive':index===ShowIndex}" v-for="(img, index) in snacks" :key='img' @click="select(index)">
+                   <img :src="img.img" class='cover-small' >
+               </div>
+           </div>
+           <br/>
+           <div @click="ZoomOut" v-for="(img, index) in snacks" :key='img' :class="[index===ShowIndex?'active': 'None']">
+               <img :src="img.img" class="max">
+           </div>
        </div>
 
   </div>
@@ -13,46 +23,50 @@
 
 <style scoped>
     .SongList{
-        width: 100%;
+        display: inline;
+        width: 80%;
+        border-radius: 10px;
+
     }
     .covers{
-        display: flex;
         justify-content: space-between;
         flex-wrap: wrap;
     }
     .cover{
-        display: flex;
+        object-fit:cover;
+        /* display: flex; */
         justify-content: center;
         width: 33%;
         margin: 10px 0;
     }
     .min{
-        /* border-radius: 10px; */
-        /* cursor: zoom-in; */
+        border-radius: 10px;
+        cursor: zoom-in;
     }
     .max{
         cursor: zoom-out;
-        width: 100%;
-
+        border-radius: 10px;
+        width: 90%;
     }
     .small{
         display: flex;
         justify-content: space-between;
         flex-wrap: wrap;
+        
     }
     .cover-small{
         display: flex;
         justify-content: center;
-        width: 10%;
-        margin: 10px 0;
         opacity: 0.6;
         cursor: pointer;
+        width: 100px;
+        height: 100px;
     }
     .cover-small:hover{
         opacity: 1;
     }
     .active{
-        display: flex;
+        display: center;
     }
     .None{
         display: none;
@@ -102,8 +116,6 @@
             },
             select(i){
                 this.ShowIndex=i;
-
-
             }
         }
     }
