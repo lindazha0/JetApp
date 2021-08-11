@@ -33,3 +33,8 @@
   color: #42b983;
 }
 </style>
+
+<script>
+var birthday = 0;
+</script>
+

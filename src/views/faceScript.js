@@ -1,3 +1,6 @@
+import html2canvas from "html2canvas"
+
+
 export default {
   data() {
     return {
@@ -111,7 +114,44 @@ export default {
       var file = new File([u8arr], filename, { type: mime });
       console.log(file);
       return file;
-    }
+    },
+     // 点击保存
+     toSave () {
+      html2canvas(document.getElementById("cut_img")).then(canvas => {
+        let saveUrl = canvas.toDataURL('image/png')
+        let aLink = document.createElement('a')
+        let blob = this.base64ToBlob(saveUrl)
+        let evt = document.createEvent('HTMLEvents')
+        evt.initEvent('click', true, true)
+        aLink.download = 'spot.jpg'
+        aLink.href = URL.createObjectURL(blob)
+        aLink.click()
+        console.log(aLink.href)
+        if (aLink.href) {
+          console.log('保存成功')
+        }
+      })
+    },
+    // 这里把图片转base64
+    base64ToBlob (code) {
+      let parts = code.split(';base64,')
+      let contentType = parts[0].split(':')[1]
+      let raw = window.atob(parts[1])
+      let rawLength = raw.length
+      let uInt8Array = new Uint8Array(rawLength)
+      for (let i = 0; i < rawLength; ++i) {
+        uInt8Array[i] = raw.charCodeAt(i)
+      }
+      return new Blob([uInt8Array], { type: contentType })
+    },
+    handleRemove(file){
+      // 1.获取将要删除图片的临时路径
+          const filePath = file.response.data.tmp_path
+          // 2.从pics数组中，找到图片对应的索引值
+          const i = this.formData.pics.findIndex(x => x.pic === filePath)
+          // 3.调用splice方法，移除图片信息
+          this.formData.splice(i, 1)
+       },
   }
 };
 

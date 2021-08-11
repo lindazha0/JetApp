@@ -1,20 +1,17 @@
 <template>
   <div>
     <div class="selector"> 
-    <ul>
       <h2>&nbsp;Selecter</h2>
-      &nbsp;<input type="text" value='enter'/><br/>
-      <li
+      &nbsp;<el-select v-model='严佳' placeholder='选择您的姓名'><br/>
+      <el-option
         v-for="(val, name, i) in nameList"
         :key="name"
         :value="val"
         :index="i"
         @click="refresh(name)"
-      >
-        &nbsp;<button>{{ val }}</button>
-      </li><br/>
-
-    </ul>
+      ></el-option>
+      </el-select>
+      <br/>
     </div>
       <div class="window" @mouseover="stop" @mouseleave="play">
         <ul class="container" :style="containerStyle">
@@ -96,9 +93,9 @@ ul {
 .window {
   text-align: center;
   position: relative;
-  top: -170px;
+  top: -100px;
   width: 600px;
-  height: 400px;
+  height: 600px;
   margin: 0 auto;
   overflow: hidden;
 }
@@ -129,6 +126,12 @@ ul {
 }
 img {
   user-select: none;
+  /* object-position: cover; */
+  /* max-height: 100%; */
+  /* max-width: 100%; */
+  /* height: auto; */
+  /* width: auto; */
+  cursor: zoom-in;
 }
 .dots {
   position: absolute;
@@ -151,7 +154,7 @@ img {
 }
 .selector {
   text-align: left;
-  width: 100px;
+  width: 200px;
   position: relative;
   top: 0;
   cursor: pointer;

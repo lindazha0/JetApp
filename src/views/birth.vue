@@ -1,25 +1,25 @@
 <template>
   <!-- <div id=background> -->
-  <div id='center'>
-    <h1>Happy Birthday! Lottery Time!<br/>Please choose a gift!</h1>
-    <button @click="submit">Submit</button>
-    <br/>
-  <div class="sudoku_row">
-    <div
-      class="sudoku_item"
-      :class="curSelect != lot.id ? 'opacity' : null"
-      v-for="(lot, index) in imgs"
-      :key="index"
-      @click="selectGift(index)"
+  <div id="center">
+    <h1>Happy Birthday! Lottery Time!<br />Please choose a gift!</h1>
+    <el-button type="warning" plain icon="el-icon-magic-stick" @click="submit" style='{border-radius: 20px;}'
+      >Submit</el-button
     >
-      <img :src="gift" width="90"  style="border-radius:20px"/>
-      <!-- {{ sudoku.name }} -->
+    <br />
+    <div class="sudoku_row">
+      <div
+        class="sudoku_item"
+        :class="curSelect != lot.id ? 'opacity' : null"
+        v-for="(lot, index) in imgs"
+        :key="index"
+        @click="selectGift(index)"
+      >
+        <img :src="gift" width="90" style="border-radius: 20px" />
+        <!-- {{ sudoku.name }} -->
+      </div>
     </div>
   </div>
-  </div>
   <!-- </div> -->
-
-
 </template>  
 
 <script>
@@ -71,27 +71,27 @@ export default {
   },
   components: {},
   methods: {
-    selectGift (e) {
+    selectGift(e) {
       var that = this;
       that.curSelect = e;
     },
-    submit(){
-      if(this.curSelect==null) 
-        alert("You haven't choose a gift!")
-      else{
-        var sub = confirm("Are you sure?\nYou have only one choice!")
-        console.log(sub)
-        if (sub){
+    submit() {
+      if (this.curSelect == null) alert("You haven't choose a gift!");
+      else {
+        var sub = confirm("Are you sure?\nYou have only one choice!");
+        console.log(sub);
+        if (sub) {
           const rand = parseInt(Math.random() * 7 + 1);
-          const msg = "You got gift"+ rand
-            +", "+ this.imgs[rand].name+
+          const msg =
+            "You got gift" +
+            rand +
+            ", " +
+            this.imgs[rand].name +
             ",\nHappy Birthday!😀";
           alert(msg);
         }
       }
-        
-
-    }
+    },
   },
 };
 </script>  
@@ -119,23 +119,23 @@ h1 {
   position: relative;
   display: flex;
   justify-content: center;
-  border-radius:20px;
+  border-radius: 20px;
   width: 33%;
   padding-top: 5px;
   padding-bottom: 5px;
   background: #adb49a;
-
 }
 .opacity {
   opacity: 0.5;
 }
 .sudoku_item img {
   margin-bottom: 5px;
+  cursor: pointer;
 }
-#background{
-/* background: url("../assets/pika.png"); */
-/* width:80%; */
-position:fixed;
-background-size:100% 100%;
+#background {
+  /* background: url("../assets/pika.png"); */
+  /* width:80%; */
+  position: fixed;
+  background-size: 100% 100%;
 }
 </style>  
