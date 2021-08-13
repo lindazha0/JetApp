@@ -35,6 +35,5 @@
 </style>
 
 <script>
-var birthday = 0;
 </script>
 

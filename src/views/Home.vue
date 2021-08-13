@@ -6,6 +6,9 @@
       >让我看看今天过生日的人是谁(￣▽￣)"</el-button
     >
     <el-button type="text" @click="addDate">查看日期</el-button>
+    <audio ref='audioTip' >
+      <source src="../assets/audio/吃饭啦.mp3">
+    ></audio>
   </div>
 </template>
 
@@ -18,6 +21,8 @@ export default {
   name: "Home",
   data() {
     return {
+      timer: "",
+      time: "",
       dialogVisible: false,
     };
   },
@@ -25,12 +30,19 @@ export default {
     HelloWorld,
   },
   mounted() {
+    //播放吃饭
+    // this.timer = setInterval(this.eat, 3000);
+
+
     // console.log(this.birthName)
     // if (!this.birthLottery) {
     //   alert("Today is" + this.birthName + "'s Birthday!!");
     //   this.birthName = "大面包";
     //   this.birthLottery=true;
     // }
+  },
+  beforeDestroy() {
+    clearInterval(this.timer);
   },
   methods: {
     open() {
@@ -47,7 +59,7 @@ export default {
         .then(() => {
           this.$message({
             type: "success",
-            message: "提醒成功!",
+            message: "快去哟!",
           });
         })
         .catch(() => {
@@ -81,14 +93,36 @@ export default {
         second = "0" + second;
       }
       let obj = year + "-" + month + "-" + date + " " + hour + ":" + minute;
-      this.voicePrompt(obj);
-      console.log(obj);
+      this.time = hour + ":" + minute;
+      this.voice(obj);
+      console.log(this.time);
 
       return obj;
     },
-    voicePrompt (text){
-    new Audio('http://tts.baidu.com/text2audio?cuid=baiduid&lan=zh&ctp=1&pdt=311&tex=' + text).play();
-    }
+    voice(text) {
+      var url =
+        "https://tts.baidu.com/text2audio?lan=zh&ie=UTF-8&spd=6&text=" +
+        encodeURI('现在是'+text);
+      let voice = new Audio(url)
+      console.log(voice)
+      voice.play();
+      // new Audio('http://tts.baidu.com/text2audio?cuid=baiduid&lan=zh&ctp=1&pdt=311&tex=' + text).play();
+      // let audio = new Audio();
+      // audio.src = "../assets/audio/test.mp3";
+      // console.log(audio);
+      // audio.play();
+    },
+    updateTime(){
+      var time = this.addDate()
+    },
+    eat(){
+      this.$refs.audioTip.play();
+    },
+    play(source) {
+      new Audio(source).play();
+      // let audio = new Audio(;)
+      // audio.play()
+    },
   },
 };
 </script>
