@@ -2,7 +2,7 @@
   <div>
     <div class="selector"> 
       <h2>&nbsp;Selecter</h2>
-      &nbsp;<el-select v-model='严佳' placeholder='选择您的姓名'><br/>
+      &nbsp;<el-select v-model='value' placeholder='选择您的姓名'><br/>
       <el-option
         v-for="(val, name, i) in nameList"
         :key="name"
@@ -16,21 +16,21 @@
       <div class="window" @mouseover="stop" @mouseleave="play">
         <ul class="container" :style="containerStyle">
           <li>
-            <img
+            <el-image
               :style="{ width: imgWidth + 'px' }"
-              :src="sliders[sliders.length - 1].img"
+              :src="sliders[sliders.length - 1]"
               alt=""
-            />
+            ></el-image>
           </li>
           <li v-for="(item, index) in sliders" :key="index">
-            <img :style="{ width: imgWidth + 'px' }" :src="item.img" alt="" />
+            <el-image :style="{ width: imgWidth + 'px' }" :src="item" alt="" ></el-image>
           </li>
           <li>
-            <img
+            <el-image
               :style="{ width: imgWidth + 'px' }"
-              :src="sliders[0].img"
+              :src="sliders[0]"
               alt=""
-            />
+            ></el-image>
           </li>
         </ul>
         <ul class="direction">

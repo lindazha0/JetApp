@@ -12,6 +12,7 @@ export default {
     },
     data() {
         return {
+            value:'',
             dirName:"labixiaoxin",
             nameList:{
                 "huihui": "慧慧", 
@@ -19,9 +20,8 @@ export default {
                 "img": "百度美女"
             },
             sliders: [
-                {
-                    img: require("../assets/labixiaoxin/1.jpg")
-                },],
+                require("../assets/labixiaoxin/1.jpg"),
+                ],
             imgWidth: 600,
             currentIndex: 1,
             distance: -600,
@@ -69,9 +69,9 @@ export default {
                 alert("invalid input")
             this.sliders = [];
             for (var i = 0; i < requireModule.keys().length; i++) {
-                this.sliders.push({
-                    img: require("@/assets/" + `${dirName}` + requireModule.keys()[i].substr(2, requireModule.keys()[i].length))
-                });
+                this.sliders.push(
+                    require("@/assets/" + `${dirName}` + requireModule.keys()[i].substr(2, requireModule.keys()[i].length))
+                );
             }
             // console.log(this.sliders)
         },
