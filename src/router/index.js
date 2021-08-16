@@ -44,7 +44,13 @@ const routes = [
     path: '/snacks',
     name: 'Snacks',
     component: () => import('../views/snack.vue')
+  },
+  {
+    path: '/:pathMatch(.*)',
+    name: 'NotFind',
+    component: () => import('../views/error.vue')
   }
+  
 ]
 
 const router = createRouter({

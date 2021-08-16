@@ -1,175 +1,97 @@
 <template>
-	<div class="speechVoice-container" style="width:100%;height:100%;">
-        <div class="model-dialog">
-            <el-dialog
-                v-model="dialogVisible"
-                width="400px"
-                :modal="isDialogModel"
-                append-to-body="true"
-                class="voice-dialog"
-                @opened="handleDialogOpened"
-                @closed="handleDialogColsed"
-            >
-                <div slot="title" class="dialog-title">
-                    <span class="el-icon-warning"></span>
-                    <span>{{dialogTitle}}</span>
-                </div>
-                <div class="letter-content">{{curLetter}}</div>
-                <div class="voice-status-img">
-                    <img :src="videoImgSrc" />
-                </div>
-                
-                <div class="oper-btn">
-                    <img :src="operImgSrc" @click="handlePlayControl"/>
-                </div>
-            </el-dialog>
-        </div>
-
-	</div>
+  <div class="testTracking">
+<!-- 
+    <video id="video" width="318" height="270" preload autoplay loop muted></video>
+    <canvas id="canvas" width="318" height="270" ></canvas>
+    <div class="buttonDiv">
+      <button type="button" @click="submit">上传照片</button>
+      <button type="button" name="button" @click="openCamera">点击我拍照</button>
+    </div> -->
+  </div>
 </template>
 
 <script>
-export default {
-    props: {
-        speechVoiceList: {
-            type: Array,
-            default: () => ([])
-        },
-    },
-    data() {
-        return {
-           dialogTitle : '预警信息',
-           dialogVisible : true,
-           isDialogModel : false,
-           //letterList : ['第一段文字','第二段文字','第三段文字','第四段文字'],
-           speechInstance : null,
-           curLetter : '',
-           letterIndex : 0,
-           timer : null,
-           videoImgSrc : '',
-           operImgSrc : '',
-           isPlay : true,
-           playEnd : false
-        };
-    },
-    mounted() {
-        this.speechInstance = new SpeechSynthesisUtterance();
-        window.speechSynthesis.cancel();
-        this.videoImgSrc =  `${this.$base.path.nodeStaticResourcesHost}/images/voiceStart.gif`;
-        this.operImgSrc = `${this.$base.path.nodeStaticResourcesHost}/images/stop.png`;
-        this.voicePlay();
-    },
-    methods: {
-        voicePlay(){
-            if(this.letterIndex < this.speechVoiceList.length){
-                this.play(this.speechVoiceList[this.letterIndex]);
-            }else{
-                this.playEnd = true;
-                this.clearData();
-                this.$emit('speechVoiceEnd');
-            }
-        },
-        play(item){
-            this.curLetter = item;
-            this.timer = null;
-            this.speechInstance.text = item;
-            this.speechInstance.lang = 'zh-CN';
-            this.speechInstance.volume = 3;
-            this.speechInstance.rate = 1;
+//   require('@/assets/tracking/build/tracking-min.js')
+//   require('@/assets/tracking/build/data/face-min.js')
+//   require('@/assets/tracking/build/data/mouth-min.js')
+//   require('@/assets/tracking/examples/assets/stats.min.js')
 
-            window.speechSynthesis.speak(this.speechInstance);
-
-            let _this = this;
-            this.speechInstance.onend = ()=>{ 
-                window.speechSynthesis.cancel();
-                _this.letterIndex++;
-                
-                _this.timer = setTimeout(() => {
-                    this.voicePlay();
-                },1000);
-            };
-        },
-        handlePlayControl(){
-            if(this.isPlay){
-                window.speechSynthesis.pause();
-                this.videoImgSrc =  `${this.$base.path.nodeStaticResourcesHost}/images/voiceStop.png`;
-                this.operImgSrc = `${this.$base.path.nodeStaticResourcesHost}/images/start.png`;
-                this.isPlay = false;
-            }else{
-                if(this.playEnd){
-                    this.voicePlay();
-                }else{
-                    window.speechSynthesis.resume();
-                }
-               
-                this.videoImgSrc =  `${this.$base.path.nodeStaticResourcesHost}/images/voiceStart.gif`;
-                this.operImgSrc = `${this.$base.path.nodeStaticResourcesHost}/images/stop.png`;
-                this.isPlay = true;
-            }
-        },
-        clearData(){
-            this.letterIndex = 0;
-            this.isPlay = false;
-            this.videoImgSrc =  `${this.$base.path.nodeStaticResourcesHost}/images/voiceStop.png`;
-            this.operImgSrc = `${this.$base.path.nodeStaticResourcesHost}/images/start.png`;
-        },
-        handleDialogColsed(){
-            window.speechSynthesis.cancel();
-            this.speechVoiceList = [];
-            this.letterIndex = 0;
-            this.voicePlay();
-        }
+  export default {
+    name:'testTracking',
+    data(){
+      return {
+      }
     },
-    
-};
+    methods:{
+      openCamera () {
+
+        var video = document.getElementById('video');
+        var canvas = document.getElementById('canvas');
+        var context = canvas.getContext('2d');
+
+        var tracker = new tracking.ObjectTracker('face');
+        tracker.setInitialScale(4);
+        tracker.setStepSize(2);
+        tracker.setEdgesDensity(0.1);
+
+        this.trackerTask = tracking.track('#video', tracker, { camera: true });
+
+        tracker.on('track', function(event) {
+          context.clearRect(0, 0, canvas.width, canvas.height);
+
+          event.data.forEach(function(rect) {
+            context.font = '11px Helvetica';
+            context.fillText("已识别到人脸，请点击拍照",100,40);
+            context.strokeStyle = '#a64ceb';
+            context.strokeRect(rect.x, rect.y, rect.width, rect.height);
+          });
+        });
+
+      },
+      submit () {
+          let that = this
+          let canvas = document.getElementById('canvas')
+          let context = canvas.getContext('2d')
+          let video = document.getElementById('video')
+          context.drawImage(video, 0,0, 500, 400)
+          canvas.toBlob((blob) => {
+            axios.post({faceUrl: URL.createObjectURL(blob)})
+            .then((res) => {
+             console.log('上传成功')
+            })
+          })
+      }
+    },
+    destroyed () {
+      // 停止侦测
+      this.trackerTask.stop()
+      // 关闭摄像头
+      this.trackerTask.closeCamera()
+    }
+  }
+
 </script>
 
-<style lang="css">
-    .voice-dialog{
-        position: fixed !important;
-        top: inherit !important;
-        right: 20px !important;
-        bottom: 0px !important;
-        left: inherit !important;
+<style lang="less" scoped>
+.testTracking {
+  height: 100vh;
+  width: 100%;
+  position: relative;
+  >* {
+    position: absolute;
+    left: 0;
+    right: 0;
+    margin: auto;
+  }
+  video, canvas {
+    top: 0;
+  }
+  .buttonDiv {
+    bottom: 10px;
+  }
+}
 
-        .el-dialog{
-            border: 1px solid #ccc;
-            border-radius: 5px;
-            box-shadow:0px 0px 5px #d3d6da;
-            margin-bottom : 20px !important;
-        }
-        .dialog-title{
-            & > span:first-child{
-              color : #faad14;
-              margin-right : 5px;
-              font-size : 18px;
-           }
-
-            & > span:last-child{
-                font-size : 18px;
-                color : #000;
-            }
-       }
-
-       .letter-content{
-           border : 1px solid #ebebeb;
-           padding : 15px 25px;
-           margin-top : -20px;
-       }
-       
-       .voice-status-img{
-           margin-top:10px;
-       }
-
-       img{
-           margin : 0px auto;
-           display : block;
-       }
-
-       .oper-btn{
-           margin : 20px auto 0px;
-           text-align : center;
-       }
-    }
 </style>
+
+
 

@@ -18,15 +18,35 @@
         <!-- {{ sudoku.name }} -->
       </div>
     </div>
+
+    <!-- interaction -->
+    <el-dialog title="Birthday Reminder" v-model="dialogVisible">
+      <p>今日寿星：{{birthName}}
+            生日快乐！<br/>快提醒他去抽奖😍</p>
+      <template #footer>
+        <span class="dialog-footer">
+          <router-link to="/face_reco">
+          <el-button type="primary" @click="loginMessage"
+            >去抽奖</el-button
+          >
+          </router-link>
+          <router-link to='/'>
+          <el-button @click="remindMessage">去提醒</el-button>
+          </router-link>
+        </span>
+      </template>
+    </el-dialog>
   </div>
   <!-- </div> -->
 </template>  
 
 <script>
+import { ElMessage } from "element-plus";
 export default {
   name: "sudoku",
   data() {
     return {
+      dialogVisible: true,
       gift: require("../assets/gift.png"),
       imgs: [
         {
@@ -70,7 +90,25 @@ export default {
     };
   },
   components: {},
+  mounted() {
+  },
   methods: {
+    // dialog message part
+    loginMessage(){
+      this.dialogVisible = false;
+      ElMessage({
+        showClose: true,
+        message: 'Please log in first!'
+      })
+    },
+    remindMessage(){
+      this.dialogVisible = false;
+      ElMessage({
+        showClose: true,
+        message: '快去告诉他这个好消息吧!'
+      })
+    },
+    // lottery part
     selectGift(e) {
       var that = this;
       that.curSelect = e;
@@ -92,6 +130,32 @@ export default {
         }
       }
     },
+    open() {
+      this.$confirm(
+        `今日寿星：${this.birthName}
+            生日快乐！\n快提醒他去抽奖😍`,
+        "生日提醒",
+        {
+          confirmButtonText: "去提醒",
+          cancelButtonText: "去抽奖",
+          type: "success",
+        }
+      )
+        .then(() => {
+          this.$message({
+            showClose: true,
+            type: "success",
+            message: "快去哟!",
+          });
+        })
+        .catch(() => {
+          this.$message({
+            showClose: true,
+            type: "info",
+            message: "选中后点击Submit抽奖",
+          });
+        });
+    }
   },
 };
 </script>  

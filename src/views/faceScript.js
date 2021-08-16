@@ -10,10 +10,10 @@ export default {
       thisCancas: null,
       thisContext: null,
       thisVideo: null,
-      openVideo:false
+      openVideo: false
     };
   },
-  mounted(){
+  mounted() {
     // this.getCompetence()//进入页面就调用摄像头
   },
   methods: {
@@ -32,7 +32,7 @@ export default {
       // 使用getUserMedia，因为它会覆盖现有的属性。
       // 这里，如果缺少getUserMedia属性，就添加它。
       if (navigator.mediaDevices.getUserMedia === undefined) {
-        navigator.mediaDevices.getUserMedia = function(constraints) {
+        navigator.mediaDevices.getUserMedia = function (constraints) {
           // 首先获取现存的getUserMedia(如果存在)
           var getUserMedia =
             navigator.webkitGetUserMedia ||
@@ -46,7 +46,7 @@ export default {
             );
           }
           // 否则，使用Promise将调用包装到旧的navigator.getUserMedia
-          return new Promise(function(resolve, reject) {
+          return new Promise(function (resolve, reject) {
             getUserMedia.call(navigator, constraints, resolve, reject);
           });
         };
@@ -61,7 +61,7 @@ export default {
       };
       navigator.mediaDevices
         .getUserMedia(constraints)
-        .then(function(stream) {
+        .then(function (stream) {
           // 旧的浏览器可能没有srcObject
           if ("srcObject" in _this.thisVideo) {
             _this.thisVideo.srcObject = stream;
@@ -69,7 +69,7 @@ export default {
             // 避免在新的浏览器中使用它，因为它正在被弃用。
             _this.thisVideo.src = window.URL.createObjectURL(stream);
           }
-          _this.thisVideo.onloadedmetadata = function(e) {
+          _this.thisVideo.onloadedmetadata = function (e) {
             _this.thisVideo.play();
           };
         })
@@ -97,7 +97,7 @@ export default {
     stopNavigator() {
       this.thisVideo.srcObject.getTracks()[0].stop();
     },
-    deleteImage(){
+    deleteImage() {
       var _this = this;
       _this.imgSrc = '';
     },
@@ -115,8 +115,8 @@ export default {
       console.log(file);
       return file;
     },
-     // 点击保存
-     toSave () {
+    // 点击保存
+    toSave() {
       html2canvas(document.getElementById("cut_img")).then(canvas => {
         let saveUrl = canvas.toDataURL('image/png')
         let aLink = document.createElement('a')
@@ -133,7 +133,7 @@ export default {
       })
     },
     // 这里把图片转base64
-    base64ToBlob (code) {
+    base64ToBlob(code) {
       let parts = code.split(';base64,')
       let contentType = parts[0].split(':')[1]
       let raw = window.atob(parts[1])
@@ -144,14 +144,14 @@ export default {
       }
       return new Blob([uInt8Array], { type: contentType })
     },
-    handleRemove(file){
+    handleRemove(file) {
       // 1.获取将要删除图片的临时路径
-          const filePath = file.response.data.tmp_path
-          // 2.从pics数组中，找到图片对应的索引值
-          const i = this.formData.pics.findIndex(x => x.pic === filePath)
-          // 3.调用splice方法，移除图片信息
-          this.formData.splice(i, 1)
-       },
+      const filePath = file.response.data.tmp_path
+      // 2.从pics数组中，找到图片对应的索引值
+      const i = this.formData.pics.findIndex(x => x.pic === filePath)
+      // 3.调用splice方法，移除图片信息
+      this.formData.splice(i, 1)
+    },
   }
 };
 

@@ -13,18 +13,18 @@
       </li>
       <!-- upload part -->
       <li class="cover">
-      <el-upload
-        action=""
-        list-type="picture-card"
-        :on-preview="handlePictureCardPreview"
-        :on-remove="handleRemove"
-        @click='toSave'
-      >
-        <i class="el-icon-plus"></i>
-      </el-upload>
-      <el-dialog v-model="visible">
-        <img width="100%" id='cut_img' :src="imageUrl" alt="" />
-      </el-dialog>
+        <el-upload
+          action=""
+          list-type="picture-card"
+          :on-preview="handlePictureCardPreview"
+          :on-remove="handleRemove"
+          @click="toSave"
+        >
+          <i class="el-icon-plus"></i>
+        </el-upload>
+        <el-dialog v-model="visible">
+          <img width="100%" id="cut_img" :src="imageUrl" alt="" />
+        </el-dialog>
       </li>
     </ul>
     <!-- display mode -->
@@ -109,21 +109,21 @@ li {
 </style>
 
 <script>
-import html2canvas from 'html2canvas'
+import html2canvas from "html2canvas";
 
 export default {
   data: function () {
     return {
-        // display snacks
+      // display snacks
       ShowIndex: 0,
       display: "none",
       MinDisplay: "flex",
       // Vue模板中使用v-for循环渲染图片时不能直接使用图片文件本地位置
       snacks: [{ img: require("../assets/gift.png") }],
 
-        // upload scacks
-        imageUrl:'',
-        visible: false  
+      // upload scacks
+      imageUrl: "",
+      visible: false,
     };
   },
   mounted() {
@@ -141,7 +141,7 @@ export default {
             requireModule.keys()[i].substr(2, requireModule.keys()[i].length)),
         });
       }
-      console.log(this.snacks);
+      // console.log(this.snacks);
     },
     ZoomIn(i) {
       this.display = "block";
@@ -157,41 +157,41 @@ export default {
     },
 
     // upload
-    handleRemove(file, fileList){
-        console.log(file, fileList);
+    handleRemove(file, fileList) {
+      console.log(file, fileList);
     },
-    handlePictureCardPreview(file){
-        this.imageUrl = file.url;
-        this.visible = true;
+    handlePictureCardPreview(file) {
+      this.imageUrl = file.url;
+      this.visible = true;
     },
-     // 点击保存
-     toSave () {
-      html2canvas(document.getElementById("cut_img")).then(canvas => {
-        let saveUrl = canvas.toDataURL('image/png')
-        let aLink = document.createElement('a')
-        let blob = this.base64ToBlob(saveUrl)
-        let evt = document.createEvent('HTMLEvents')
-        evt.initEvent('click', true, true)
-        aLink.download = 'spot.jpg'
-        aLink.href = URL.createObjectURL(blob)
-        aLink.click()
-        console.log(aLink.href)
+    // 点击保存
+    toSave() {
+      html2canvas(document.getElementById("cut_img")).then((canvas) => {
+        let saveUrl = canvas.toDataURL("image/png");
+        let aLink = document.createElement("a");
+        let blob = this.base64ToBlob(saveUrl);
+        let evt = document.createEvent("HTMLEvents");
+        evt.initEvent("click", true, true);
+        aLink.download = "spot.jpg";
+        aLink.href = URL.createObjectURL(blob);
+        aLink.click();
+        console.log(aLink.href);
         if (aLink.href) {
-          console.log('保存成功')
+          console.log("保存成功");
         }
-      })
+      });
     },
     // 这里把图片转base64
-    base64ToBlob (code) {
-      let parts = code.split(';base64,')
-      let contentType = parts[0].split(':')[1]
-      let raw = window.atob(parts[1])
-      let rawLength = raw.length
-      let uInt8Array = new Uint8Array(rawLength)
+    base64ToBlob(code) {
+      let parts = code.split(";base64,");
+      let contentType = parts[0].split(":")[1];
+      let raw = window.atob(parts[1]);
+      let rawLength = raw.length;
+      let uInt8Array = new Uint8Array(rawLength);
       for (let i = 0; i < rawLength; ++i) {
-        uInt8Array[i] = raw.charCodeAt(i)
+        uInt8Array[i] = raw.charCodeAt(i);
       }
-      return new Blob([uInt8Array], { type: contentType })
+      return new Blob([uInt8Array], { type: contentType });
     },
   },
 };
