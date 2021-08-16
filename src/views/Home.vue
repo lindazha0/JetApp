@@ -3,24 +3,33 @@
     <img alt="Linda logo" src="../assets/dollar.png" />
     <HelloWorld msg="Welcome to Linda's Jetson Nano App! 😊" />
 
-
-    <p type="text" @click="dialogVisible = true"
-      >让我看看今天过生日的人是谁(￣▽￣)"</p
-    >
+    <!-- for birthday reminder -->
+    <p type="text" @click="dialogVisible = true">
+      让我看看今天过生日的人是谁(￣▽￣)"
+    </p>
     <el-dialog title="Birthday Reminder" v-model="dialogVisible">
-      <p>今日寿星：{{birthName}}
-            生日快乐！<br/>快提醒他去抽奖😍</p>
+      <p>今日寿星：{{ birthName }} 生日快乐！<br />快提醒他去抽奖😍</p>
       <template #footer>
         <span class="dialog-footer">
           <router-link to="/face_reco">
-          <el-button type="primary" @click="loginMessage"
-            >去抽奖</el-button
-          >
+            <el-button type="primary" @click="loginMessage">去抽奖</el-button>
           </router-link>
           <el-button @click="remindMessage">去提醒</el-button>
         </span>
       </template>
     </el-dialog>
+
+    <!-- for meal time reminder -->
+    <el-dialog title="Birthday Reminder" v-model="mealReminderVisible">
+      <p>该吃饭啦！！</p>
+      <template #footer>
+        <span class="dialog-footer">
+          <el-button type="primary" @click="closeEatReminder">确定</el-button>
+        </span>
+      </template>
+    </el-dialog>
+
+    <!-- for clock -->
     <el-button type="text" @click="playDateTime">报时</el-button>
     <audio ref="audioTip">
       <source src="../assets/audio/吃饭啦.mp3" />
@@ -41,6 +50,7 @@ export default {
       timer: "",
       time: "",
       dialogVisible: false,
+      mealReminderVisible: false,
     };
   },
   components: {
@@ -48,7 +58,7 @@ export default {
   },
   mounted() {
     //播放吃饭
-    // this.timer = setInterval(this.eat, 3000);
+    this.timer = setInterval(this.checkTime, 30000);
     // console.log(this.birthName)
     // if (!this.birthLottery) {
     //   alert("Today is" + this.birthName + "'s Birthday!!");
@@ -60,26 +70,26 @@ export default {
     clearInterval(this.timer);
   },
   methods: {
-    loginMessage(){
+    loginMessage() {
       this.dialogVisible = false;
       ElMessage({
         showClose: true,
-        message: 'Please log in first!'
-      })
+        message: "Please log in first!",
+      });
     },
-    remindMessage(){
+    remindMessage() {
       this.dialogVisible = false;
       ElMessage({
         showClose: true,
-        message: '快去告诉他这个好消息吧!'
-      })
+        message: "快去告诉他这个好消息吧!",
+      });
     },
-    checkTime(){
+    checkTime() {
       var now = new Date();
       var hour = now.getHours();
       var minute = now.getMinutes();
       var second = now.getSeconds();
-      
+
       if (hour < 10) {
         hour = "0" + hour;
       }
@@ -89,8 +99,13 @@ export default {
       if (second < 10) {
         second = "0" + second;
       }
+      // set a clock
+      if (hour == "11" && minute == "30") {
+        this.eatReminder();
+      }
       this.time = hour + ":" + minute + ":" + second;
-      this.voice(this.time);
+      // console.log(this.time);
+      // this.voice(this.time);
       return this.time;
     },
     checkDate() {
@@ -109,9 +124,10 @@ export default {
 
       return obj;
     },
-    playDateTime(){
+    playDateTime() {
       let obj = `现在是${this.checkDate()} ${this.checkTime()}`;
       console.log(obj);
+
       this.voice(obj);
     },
     voice(text) {
@@ -127,11 +143,25 @@ export default {
       // console.log(audio);
       // audio.play();
     },
-    updateTime() {
-      var time = this.addDate();
+    playEat() {
+      this.$refs.audioTip.play();
     },
     eatReminder() {
-      this.timer = setInterval(this.$refs.audioTip.play(), 3000);
+      this.mealReminderVisible = true;
+      this.timer = setInterval(this.playEat, 2000);
+    },
+    closeEatReminder() {
+      this.mealReminderVisible = false;
+      clearInterval(this.timer);
+
+      // delay
+      clearTimeout(timer); //清除延迟执行
+      var timer = setTimeout(() => {
+        //设置延迟执行
+        console.log("ok");
+      }, 600000);
+
+      timer = setInterval(this.checkTime, 30000);
     },
     play(source) {
       new Audio(source).play();
