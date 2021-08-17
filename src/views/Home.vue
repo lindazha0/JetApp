@@ -132,8 +132,7 @@ export default {
     },
     voice(text) {
       var url =
-        "https://tts.baidu.com/text2audio?lan=zh&ie=UTF-8&spd=6&text=" +
-        encodeURI(text);
+        `https://tts.baidu.com/text2audio?lan=zh&ie=UTF-8&spd=6&text=${encodeURI(text)}`;
       let voice = new Audio(url);
       // console.log(voice);
       voice.play();
