@@ -150,6 +150,18 @@ export default {
       const i = this.formData.pics.findIndex(x => x.pic === filePath)
       // 3.调用splice方法，移除图片信息
       this.formData.splice(i, 1)
+    },
+    getApi(){
+      this.$axios({
+        method:'get',
+        url: 'auth/oauth/token?grant_type=password',
+        data: {
+          name: 'admin',
+          password: '123456'
+        }
+      }).then((res)=>{
+        console.log(res)
+      })
     }
   }
 };
