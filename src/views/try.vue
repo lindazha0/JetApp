@@ -1,97 +1,99 @@
 <template>
-  <div class="testTracking">
-<!-- 
-    <video id="video" width="318" height="270" preload autoplay loop muted></video>
-    <canvas id="canvas" width="318" height="270" ></canvas>
-    <div class="buttonDiv">
-      <button type="button" @click="submit">上传照片</button>
-      <button type="button" name="button" @click="openCamera">点击我拍照</button>
-    </div> -->
+  <div>
+    <input
+      type="file"
+      id="id"
+      name="image"
+      class="getImgUrl_file"
+      @change="shangc($event)"
+      accept="image/jpg, image/jpeg, image/png"
+    />
+    <br />
+    <img :src="picPath" alt="" />
+
+    <h4>识别结果:</h4>
+    <table>
+      <tr>
+        <th>物品名称</th>
+        <th>所属类目</th>
+        <th>识别度</th>
+      </tr>
+      <tr v-if="data" v-for="item in data">
+        <td>{{ item.keyword }}</td>
+        <td>{{ item.root }}</td>
+        <td>{{ item.score }}</td>
+      </tr>
+    </table>
   </div>
 </template>
 
 <script>
-//   require('@/assets/tracking/build/tracking-min.js')
-//   require('@/assets/tracking/build/data/face-min.js')
-//   require('@/assets/tracking/build/data/mouth-min.js')
-//   require('@/assets/tracking/examples/assets/stats.min.js')
+export default {
+  data() {
+    return {
+      data: "",
+      picPath: "",
+    };
+  },
+  methods: {
+    shangc(e) {
+      let files = document.getElementById("id").files[0];
+      let name = document.getElementById("id").files[0].name;
+      // this.picPath=document.getElementById("id").value
 
-  export default {
-    name:'testTracking',
-    data(){
-      return {
+      let arr = name.split(".");
+      let fileSize = 0;
+      let fileMaxSize = 10240; //1M
+      if (files) {
+        fileSize = files.size;
+        if (fileSize > 10 * 1024 * 1024) {
+          alert("文件大小不能大于10M！");
+          file.value = "";
+          return false;
+        } else if (fileSize <= 0) {
+          alert("文件大小不能为0M！");
+          file.value = "";
+          return false;
+        }
+      } else {
+        return false;
       }
-    },
-    methods:{
-      openCamera () {
-
-        var video = document.getElementById('video');
-        var canvas = document.getElementById('canvas');
-        var context = canvas.getContext('2d');
-
-        var tracker = new tracking.ObjectTracker('face');
-        tracker.setInitialScale(4);
-        tracker.setStepSize(2);
-        tracker.setEdgesDensity(0.1);
-
-        this.trackerTask = tracking.track('#video', tracker, { camera: true });
-
-        tracker.on('track', function(event) {
-          context.clearRect(0, 0, canvas.width, canvas.height);
-
-          event.data.forEach(function(rect) {
-            context.font = '11px Helvetica';
-            context.fillText("已识别到人脸，请点击拍照",100,40);
-            context.strokeStyle = '#a64ceb';
-            context.strokeRect(rect.x, rect.y, rect.width, rect.height);
-          });
-        });
-
-      },
-      submit () {
-          let that = this
-          let canvas = document.getElementById('canvas')
-          let context = canvas.getContext('2d')
-          let video = document.getElementById('video')
-          context.drawImage(video, 0,0, 500, 400)
-          canvas.toBlob((blob) => {
-            axios.post({faceUrl: URL.createObjectURL(blob)})
-            .then((res) => {
-             console.log('上传成功')
-            })
+      //转码base64
+      let reader = new FileReader();
+      let imgFile;
+      // let that = this
+      reader.readAsDataURL(files);
+      reader.onload = async (e) => {
+        imgFile = e.target.result;
+        let arr = imgFile.split(",");
+        this.faceBase64 = arr[1];
+        this.picPath = "data:image/png;base64," + arr[1];
+        // console.log(imgFile)
+        console.log(arr[1]);
+        const { data: data } = await this.$http.post(
+          "https://aip.baidubce.com/rest/2.0/image-classify/v2/advanced_general",
+          this.$qs.stringify({
+            access_token: "获取到的access_token",
+            image: arr[1],
           })
-      }
+        );
+        this.data = data.result;
+        console.log(this.data);
+      };
     },
-    destroyed () {
-      // 停止侦测
-      this.trackerTask.stop()
-      // 关闭摄像头
-      this.trackerTask.closeCamera()
-    }
-  }
-
+  },
+};
 </script>
 
-<style lang="less" scoped>
-.testTracking {
-  height: 100vh;
-  width: 100%;
-  position: relative;
-  >* {
-    position: absolute;
-    left: 0;
-    right: 0;
-    margin: auto;
-  }
-  video, canvas {
-    top: 0;
-  }
-  .buttonDiv {
-    bottom: 10px;
-  }
+<style scoped>
+table,
+th,
+td {
+  border: 1px solid orangered;
 }
-
+img {
+  width: 400px;
+  height: 400px;
+  border: 1px solid red;
+}
 </style>
-
-
-

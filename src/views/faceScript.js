@@ -1,6 +1,5 @@
 import html2canvas from "html2canvas"
 
-
 export default {
   data() {
     return {
@@ -151,7 +150,7 @@ export default {
       const i = this.formData.pics.findIndex(x => x.pic === filePath)
       // 3.调用splice方法，移除图片信息
       this.formData.splice(i, 1)
-    },
+    }
   }
 };
 

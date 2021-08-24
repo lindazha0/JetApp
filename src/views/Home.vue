@@ -103,6 +103,9 @@ export default {
       if (hour == "11" && minute == "30") {
         this.eatReminder();
       }
+      if (hour == "17" && minute == "30") {
+        this.eatReminder();
+      }
       this.time = hour + ":" + minute + ":" + second;
       // console.log(this.time);
       // this.voice(this.time);
@@ -131,8 +134,9 @@ export default {
       this.voice(obj);
     },
     voice(text) {
-      var url =
-        `https://tts.baidu.com/text2audio?lan=zh&ie=UTF-8&spd=6&text=${encodeURI(text)}`;
+      var url = `https://tts.baidu.com/text2audio?lan=zh&ie=UTF-8&spd=6&text=${encodeURI(
+        text
+      )}`;
       let voice = new Audio(url);
       // console.log(voice);
       voice.play();
