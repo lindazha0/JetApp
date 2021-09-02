@@ -10,7 +10,7 @@ import axios from 'axios'
 
 const app = createApp(App);
 // use axios
-axios.defaults.baseURL = 'localhost:8888/'; // 请求的默认域名
+// axios.defaults.baseURL = 'localhost:8888/'; // 请求的默认域名
 app.config.globalProperties.$axios = axios;
 
 app.config.globalProperties.birthName = '老面包';

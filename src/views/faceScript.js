@@ -153,14 +153,16 @@ export default {
     },
     getApi(){
       this.$axios({
-        method:'get',
-        url: 'auth/oauth/token?grant_type=password',
-        data: {
-          name: 'admin',
-          password: '123456'
-        }
+        method:'post',
+        url: '/api/face/add',
+        // data: {
+        //   name: 'user',
+        //   password: '96bedf6d-1f5e-482a-a4e5-27d8560ba592'
+        // }
       }).then((res)=>{
         console.log(res)
+      }).catch(error=>{
+        console.log(error)
       })
     }
   }

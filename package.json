@@ -4,13 +4,17 @@
   "private": true,
   "scripts": {
     "serve": "vue-cli-service serve",
-    "build": "vue-cli-service build"
+    "build": "vue-cli-service build",
+    "dev": "node server/app.js"
   },
   "dependencies": {
     "axios": "^0.21.1",
+    "body-parser": "^1.12.4",
+    "bootstrap-sass": "^3.3.4",
     "core-js": "^3.6.5",
     "element-plus": "^1.0.2-beta.70",
     "element-ui": "^2.15.5",
+    "express": "^4.12.3",
     "html2canvas": "^1.2.2",
     "qs": "^6.10.1",
     "vue": "^3.0.0",
@@ -22,9 +26,10 @@
     "@vue/cli-plugin-router": "~4.5.0",
     "@vue/cli-plugin-vuex": "~4.5.0",
     "@vue/cli-service": "~4.5.0",
+    "@vue/compiler-sfc": "^3.0.0",
+    "http-proxy-middleware": "^2.0.1",
     "less": "^4.1.1",
-    "less-loader": "^7.3.0",
-    "@vue/compiler-sfc": "^3.0.0"
+    "less-loader": "^7.3.0"
   },
   "browserslist": [
     "> 1%",
