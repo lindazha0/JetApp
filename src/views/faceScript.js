@@ -1,4 +1,5 @@
 import html2canvas from "html2canvas"
+import Qs from 'qs'
 
 export default {
   data() {
@@ -9,7 +10,10 @@ export default {
       thisCancas: null,
       thisContext: null,
       thisVideo: null,
-      openVideo: false
+      openVideo: false,
+
+      // baidu api
+      token: '',
     };
   },
   mounted() {
@@ -76,7 +80,7 @@ export default {
           console.log(err);
         });
     },
-    //  绘制图片（拍照功能）
+    //  绘制图片并存为base64（拍照功能）
     setImage() {
       var _this = this;
       // canvas画图
@@ -90,7 +94,7 @@ export default {
       // 获取图片base64链接
       var image = this.thisCancas.toDataURL("image/png");
       _this.imgSrc = image;//赋值并预览图片
-      console.log(image)
+      // console.log('image in base64 format',image)
     },
     // 关闭摄像头
     stopNavigator() {
@@ -131,7 +135,7 @@ export default {
         }
       })
     },
-    // 这里把图片转base64
+    // 这里转base64->blob
     base64ToBlob(code) {
       let parts = code.split(';base64,')
       let contentType = parts[0].split(':')[1]
@@ -151,17 +155,31 @@ export default {
       // 3.调用splice方法，移除图片信息
       this.formData.splice(i, 1)
     },
-    getApi(){
-      this.$axios({
-        method:'post',
-        url: '/api/face/add',
-        // data: {
-        //   name: 'user',
-        //   password: '96bedf6d-1f5e-482a-a4e5-27d8560ba592'
-        // }
-      }).then((res)=>{
-        console.log(res)
-      }).catch(error=>{
+    async getAccessToken() {
+      let _ = await this.$axios({
+        method: 'post',
+        url: '/api/face/getToken',
+      }).then((res) => {
+        console.log('get token:',res.data.data)
+        this.token = res.data.data
+      }).catch(error => {
+        console.log(error)
+      })
+      return _
+    },
+    async getFaceDetect() {
+      // let _=await this.getAccessToken()
+      this.$axios.post(
+        "/api/face/detect",
+        Qs.stringify({ image: this.imgSrc.replace(/^data:image\/\w+;base64,/, "") })
+      ).then((res) => {
+        let obj = JSON.parse(res.data.data)
+        if (obj.error_msg == 'SUCCESS') {
+          console.log(obj.result)
+
+        }
+        // this.token=res.data
+      }).catch(error => {
         console.log(error)
       })
     }

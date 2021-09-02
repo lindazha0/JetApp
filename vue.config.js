@@ -1,4 +1,3 @@
-
 module.exports = {
     devServer: {
         // vue项目启动时的ip地址和端口
@@ -11,7 +10,6 @@ module.exports = {
                 target: 'http://localhost:9092',
                 changeOrigin: true,
                 ws: true,
-             
                 pathRewrite: {
                  '^/api': '/'
                 }

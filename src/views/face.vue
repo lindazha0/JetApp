@@ -4,7 +4,7 @@
       <el-button type='success' size="small" @click="getCompetence()">打开摄像头</el-button>
       <el-button type='success' size="small" @click="stopNavigator()">关闭摄像头</el-button>
       <el-button type='success' size="small" @click="setImage()">拍照</el-button>
-      <el-button type='success' size="small" @click="getApi()">测试api</el-button>
+      <el-button type='success' size="small" @click="getAccessToken()">测试token api</el-button>
     </div>
     <!-- 视频外面的框框 -->
     <div class="box">
@@ -23,6 +23,9 @@
     ></canvas>
     <div v-if="imgSrc" class="img_bg_camera">
       <p>效果预览</p>
+      <el-button type='success' size="small" @click="getFaceDetect">
+        打卡
+      </el-button>
       <el-button type='success' size="small" title='只能上传jpg/png文件，且不超过500kb' @click="toSave">
         保存靓照
       </el-button>
