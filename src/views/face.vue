@@ -4,7 +4,7 @@
       <el-button type='success' size="small" @click="getCompetence()">打开摄像头</el-button>
       <el-button type='success' size="small" @click="stopNavigator()">关闭摄像头</el-button>
       <el-button type='success' size="small" @click="setImage()">拍照</el-button>
-      <el-button type='success' size="small" @click="getAccessToken()">测试token api</el-button>
+      <el-button type='success' size="small" @click="addFace('linda')">test api</el-button>
     </div>
     <!-- 视频外面的框框 -->
     <div class="box">
