@@ -2,12 +2,11 @@
   <div class="camera">
     <div class="button">
       <el-button type='success' size="small" @click="getCompetence()">打开摄像头</el-button>
-      <el-button type='success' size="small" @click="stopNavigator()">关闭摄像头</el-button>
       <el-button type='success' size="small" @click="setImage()">拍照</el-button>
       <el-button type='success' size="small" @click="addFace('linda')">test api</el-button>
     </div>
     <!-- 视频外面的框框 -->
-    <div class="box">
+    <div class="box" :style="{display: play}">
       <video
         id="videoCamera"
         :width="videoWidth"
@@ -16,13 +15,15 @@
       ></video>
     </div>
     <canvas
-      style="display: none"
+      style="display: none;"
       id="canvasCamera"
       :width="videoWidth"
       :height="videoHeight"
     ></canvas>
     <div v-if="imgSrc" class="img_bg_camera">
-      <p>效果预览</p>
+      <br/>
+      <img :src="imgSrc" alt class="tx_img" id="cut_img" />
+      <br/>
       <el-button type='success' size="small" @click="getFaceDetect">
         打卡
       </el-button>
@@ -31,8 +32,7 @@
       </el-button>
       <el-button type='success' size="small" @click="deleteImage()">
         删除</el-button>
-      <br/>
-      <img :src="imgSrc" alt class="tx_img" id="cut_img" />
+      
       
     </div>
   </div>
