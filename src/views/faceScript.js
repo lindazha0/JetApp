@@ -1,5 +1,7 @@
 import html2canvas from "html2canvas"
 import Qs from 'qs'
+import tracking from "@/assets/tracking/build/tracking-min.js";
+import "@/assets/tracking/build/data/face-min.js";
 
 export default {
   data() {
@@ -8,7 +10,7 @@ export default {
       videoHeight: 350,
       imgSrc: "",
       tmp: '', // test image in base64
-      thisCancas: null,
+      thisCanvas: null,
       thisContext: null,
       thisVideo: null,
       openVideo: false,
@@ -23,12 +25,11 @@ export default {
       },
       loading: false,
 
-
       // baidu api
       token: '',
       log_id: '',
       user_id: '', // add face
-      selected_user_id: '',//delete face
+      selected_user_id: '',//search face
       user_id_list: [],
       face_token: '',
       selected_face_token: '',
@@ -39,7 +40,6 @@ export default {
       predict_score: '',
 
       // draw border on image
-
     };
   },
   mounted() {
@@ -51,10 +51,17 @@ export default {
       var _this = this;
       _this.play = 'block'; // display video
       _this.imgSrc = ''; // hide photo
-      _this.thisCancas = document.getElementById("canvasCamera");
-      _this.thisContext = this.thisCancas.getContext("2d");
+
+      _this.thisCanvas = document.getElementById("canvasCamera");
+      _this.thisContext = this.thisCanvas.getContext("2d");
+
       _this.thisVideo = document.getElementById("videoCamera");
       _this.thisVideo.style.display = 'block';
+
+      let canvas = document.getElementById('canvasBorder');
+      let context = canvas.getContext('2d');
+
+      // #region camera shot
       // 获取媒体属性，旧版本浏览器可能不支持mediaDevices，我们首先设置一个空对象
       if (navigator.mediaDevices === undefined) {
         navigator.mediaDevices = {};
@@ -107,6 +114,36 @@ export default {
         .catch(err => {
           console.log(err);
         });
+      // #endregion
+
+      // #region face bounding box
+      // // 固定写法
+      let tracker = new window.tracking.ObjectTracker("face");
+      tracker.setInitialScale(10);
+      tracker.setStepSize(2);
+      tracker.setEdgesDensity(0.1);
+      window.tracking.track("#videoCamera", tracker, {
+        camera: true,
+      });
+
+      tracker.on("track", function (event) {
+        // 检测出人脸 绘画人脸位置
+        context.clearRect(0, 0, canvas.width, canvas.height);
+        event.data.forEach(function (rect) {
+          context.strokeStyle = "#0764B7";
+          context.strokeRect(rect.x, rect.y, rect.width, rect.height);
+
+          context.font = '11px Helvetica';
+          context.fillStyle = "#fff";
+          context.fillText('x: ' + rect.x + 'px', rect.x + rect.width + 5, rect.y + 11);
+          context.fillText('y: ' + rect.y + 'px', rect.x + rect.width + 5, rect.y + 22);
+          console.log("catch human face!");
+
+          // 上传图片
+          // _this.uploadLock && _this.screenshotAndUpload();
+        });
+      });
+      //#endregion
     },
     //  绘制图片并存为base64（拍照功能）
     setImage() {
@@ -120,10 +157,11 @@ export default {
         _this.videoHeight
       );
       // 获取图片base64链接
-      var image = this.thisCancas.toDataURL("image/png");
+      var image = this.thisCanvas.toDataURL("image/png");
       _this.imgSrc = image;// display photo, 赋值并预览图片
 
       // close camera
+      _this.
       _this.thisVideo.srcObject.getTracks()[0].stop();
       _this.play = 'none'; // hide video
     },
@@ -299,18 +337,28 @@ export default {
 
     // draw binding box
     drawBindingBox() {
-      var img = d3.select("#searchImage"),
-          imgDom=document.getElementById('searchImage'),
-          width=imgDom.clientWidth,
-          height=imgDom.clientHeight
-      var svg = img.append('svg').attr('width', width).attr('height',height)
-      svg.append('rect')
-          .attr('transform','translate(10,10)')
-          .attr('width', '100px')
-          .attr('height', '100px')
-          .attr('fill', 'red')
+      d3.select('svg').append('rect')
+        .attr('transform', 'translate(80,40)')
+        .attr('width', '30px')
+        .attr('height', '40px')
+        .attr('fill', '#fff')
+        .attr('stroke-width', '2px')
+        .attr('stroke', 'blue')
 
-      console(svg)
+      var img = d3.select("#searchImage"),
+        imgDom = document.getElementById('searchImage'),
+        width = imgDom.clientWidth,
+        height = imgDom.clientHeight
+      var svg = img.append('svg').attr('width', width).attr('height', height)
+      svg.append('rect')
+        .attr('transform', 'translate(80,40)')
+        .attr('width', '30px')
+        .attr('height', '40px')
+        .attr('fill', '#fff')
+        // .attr('stroke-width', '2px')
+        .attr('stroke', 'blue')
+
+      console.log(svg)
     },
 
     // #region bellow are Baidu face recognition
