@@ -2,12 +2,13 @@
   <div class="camera" v-loading="loading" element-loading-text="Loading...">
     <div class="button">
       <el-button type="success" @click="getCompetence()">打开摄像头</el-button>
-      <el-button type="success" @click="setImage()">拍照</el-button>
+      <el-button type="success" @click="takePhoto()">拍照</el-button>
 
       <!-- 视频外面的框框 -->
       <div class="box" :style="{ display: play }">
         <video
           id="videoCamera"
+          style="z-index: 2"
           :width="videoWidth"
           :height="videoHeight"
           preload
@@ -17,13 +18,14 @@
         ></video>
         <canvas
           id="canvasBorder"
+          style="z-index: 3"
           :width="videoWidth"
           :height="videoHeight"
         ></canvas>
       </div>
       <!-- draw photo -->
       <canvas
-        style="display: none"
+        style="z-index: 4; display: none"
         id="canvasCamera"
         :width="videoWidth"
         :height="videoHeight"
@@ -84,13 +86,18 @@
         v-model="user_id"
         placeholder="please enter the user_id"
       ></el-input>
-      <el-image
-        :src="tmp"
-        :height="200"
-        :style="{ display: displayUploadImg }"
-      ></el-image>
       <div style="color: #666666,font-size:12px">
         用户名必须为数字、字母、下划线的组合
+      </div>
+      <div class='detectFace'>
+      <el-image
+        id="searchImage"
+          style="z-index: 2"
+        class="el-image__inner inDetectFace"
+        :src="tmp"
+        :style="{ display: displayUploadImg }"
+      ></el-image>
+      <svg class='inDetectFace' style="z-index: 3" width="300px" height="300px"></svg>
       </div>
     </el-dialog>
 
@@ -180,13 +187,16 @@
         "
       ></el-button>
       <br />
-      <image
+      <div class='detectFace'>
+      <el-image
         id="searchImage"
-        class="el-image__inner"
+          style="z-index: 2"
+        class="el-image__inner inDetectFace"
         :src="tmp"
         :style="{ display: displayUploadImg }"
-      ></image>
-      <svg width="200px" height="200px"></svg>
+      ></el-image>
+      <svg class='inDetectFace' style="z-index: 3" width="300px" height="300px"></svg>
+      </div>
     </el-dialog>
   </div>
 </template>
@@ -196,8 +206,8 @@
   z-index: 1;
   position: relative;
   margin: auto;
-  width: 250px;
-  height: 350px;
+  width: 320px;
+  height: 240px;
 }
 .input_with_label {
   display: inline-block;
@@ -215,10 +225,22 @@ video,
 canvas {
   margin: auto;
   position: absolute;
-  z-index: 2;
   top: 0;
   left: 0;
   border: #2722 5px solid;
+}
+.detectFace{
+  z-index: 1;
+  position: relative;
+  margin: auto;
+  width: 300px;
+  height: 300px;
+}
+.inDetectFace{
+  margin: auto;
+  position: absolute;
+  left:0;
+  top:0;
 }
 </style>
 

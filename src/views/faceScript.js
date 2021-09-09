@@ -6,8 +6,8 @@ import "@/assets/tracking/build/data/face-min.js";
 export default {
   data() {
     return {
-      videoWidth: 250,
-      videoHeight: 350,
+      videoWidth: 320,
+      videoHeight: 240,
       imgSrc: "",
       tmp: '', // test image in base64
       thisCanvas: null,
@@ -40,6 +40,7 @@ export default {
       predict_score: '',
 
       // draw border on image
+      uploadLock: true
     };
   },
   mounted() {
@@ -119,7 +120,7 @@ export default {
       // #region face bounding box
       // // 固定写法
       let tracker = new window.tracking.ObjectTracker("face");
-      tracker.setInitialScale(10);
+      tracker.setInitialScale(4);
       tracker.setStepSize(2);
       tracker.setEdgesDensity(0.1);
       window.tracking.track("#videoCamera", tracker, {
@@ -134,16 +135,30 @@ export default {
           context.strokeRect(rect.x, rect.y, rect.width, rect.height);
 
           context.font = '11px Helvetica';
-          context.fillStyle = "#fff";
-          context.fillText('x: ' + rect.x + 'px', rect.x + rect.width + 5, rect.y + 11);
-          context.fillText('y: ' + rect.y + 'px', rect.x + rect.width + 5, rect.y + 22);
+          context.fillStyle = "#0764B7";
+          context.fillText( _this.predict_user+'  '+ _this.predict_score, rect.x-5, rect.y+rect.height + 11);
           console.log("catch human face!");
 
           // 上传图片
-          // _this.uploadLock && _this.screenshotAndUpload();
+          _this.uploadLock && _this.screenshotAndUpload();
         });
       });
       //#endregion
+    },
+    // 上传图片
+    async screenshotAndUpload() {
+      // 上锁避免重复发送请求
+      this.uploadLock = false;
+
+      // 绘制当前帧图片转换为base64格式
+      // 使用 base64Img 请求接口即可
+      let _=await this.searchFace(this.setImage())
+      if(parseInt(this.predict_score)>70){
+        alert('detecting result:' + this.predict_user + ',\nscore:' + this.predict_score)
+      }
+
+      // 请求接口成功以后打开锁
+      this.uploadLock = true;
     },
     //  绘制图片并存为base64（拍照功能）
     setImage() {
@@ -158,12 +173,15 @@ export default {
       );
       // 获取图片base64链接
       var image = this.thisCanvas.toDataURL("image/png");
-      _this.imgSrc = image;// display photo, 赋值并预览图片
+      return image;// display photo, 赋值并预览图片
+    },
+    // take photo
+    takePhoto(){
+      this.imgSrc=this.setImage()
 
       // close camera
-      _this.
-      _this.thisVideo.srcObject.getTracks()[0].stop();
-      _this.play = 'none'; // hide video
+      this.thisVideo.srcObject.getTracks()[0].stop();
+      this.play = 'none'; // hide video
     },
     deleteImage() {
       var _this = this;
@@ -334,31 +352,16 @@ export default {
           })
         })
     },
-
     // draw binding box
-    drawBindingBox() {
+    drawBindingBox(x, y, w, h, rotate) {
       d3.select('svg').append('rect')
-        .attr('transform', 'translate(80,40)')
-        .attr('width', '30px')
-        .attr('height', '40px')
-        .attr('fill', '#fff')
+        .attr('x',x+'px')
+        .attr('y',y+'px')
+        .attr('width', w+'px')
+        .attr('height', h+'px')
+        .attr('fill', 'none')
         .attr('stroke-width', '2px')
         .attr('stroke', 'blue')
-
-      var img = d3.select("#searchImage"),
-        imgDom = document.getElementById('searchImage'),
-        width = imgDom.clientWidth,
-        height = imgDom.clientHeight
-      var svg = img.append('svg').attr('width', width).attr('height', height)
-      svg.append('rect')
-        .attr('transform', 'translate(80,40)')
-        .attr('width', '30px')
-        .attr('height', '40px')
-        .attr('fill', '#fff')
-        // .attr('stroke-width', '2px')
-        .attr('stroke', 'blue')
-
-      console.log(svg)
     },
 
     // #region bellow are Baidu face recognition
@@ -408,6 +411,8 @@ export default {
         if (obj.error_code == '222018') {
           alert('用户名格式错误！必须为数字、字母、下划线的组合')
         }
+        // let faceBox=obj.result.location
+        // this.drawBindingBox(faceBox.left, faceBox.top, faceBox.width, faceBox.height, faceBox.rotation)
       }).catch(error => {
         alert(error)
         console.log(error)
@@ -466,11 +471,9 @@ export default {
         // console.log(obj)
         if (obj.error_msg == 'SUCCESS') {
           let list = obj.result['user_list']
-          // console.log(list)
+          // console.log(obj.result)
           this.predict_user = list[0].user_id
           this.predict_score = list[0].score
-          alert('detecting result:' + this.predict_user + ',\nscore:' + this.predict_score)
-          this.drawBindingBox()
         }
       }).catch(error => {
         console.log(error)
