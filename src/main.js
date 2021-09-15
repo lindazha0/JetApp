@@ -1,5 +1,6 @@
 import { createApp } from 'vue';
 import App from './App.vue';
+// import global_ from './global.vue';
 import router from './router';
 import store from './store';
 import ElementUI from 'element-plus';
@@ -14,6 +15,7 @@ const app = createApp(App);
 // axios.defaults.baseURL = 'localhost:8888/'; // 请求的默认域名
 app.config.globalProperties.$axios = axios;
 
-app.config.globalProperties.birthName = '老面包';
-app.config.globalProperties.birthLottery = false;
-app.use(store).use(router).use(ElementUI,{size:'small',zIndex:3000}).mount('#app');
+app.use(store)
+    .use(router)
+    .use(ElementUI,{size:'small',zIndex:3000})
+    .mount('#app');

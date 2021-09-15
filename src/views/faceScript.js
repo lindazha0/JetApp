@@ -44,6 +44,7 @@ export default {
     };
   },
   mounted() {
+    // this.getCompetence()
   },
   methods: {
     // #region camera
@@ -130,17 +131,32 @@ export default {
       tracker.on("track", function (event) {
         // 检测出人脸 绘画人脸位置
         context.clearRect(0, 0, canvas.width, canvas.height);
+        // put face in the circle
+        context.beginPath();
+        context.rect(0,0,canvas.width,canvas.height, false)
+        context.closePath();
+        context.arc(canvas.width/2, canvas.height/2, 90, 0, 2 * Math.PI, true);
+        context.closePath();
+        
+        context.fillStyle = "#3f6b46";
+        context.fill();
+        // context.strokeRect(canvas.width/4, canvas.height/4, canvas.width/4, canvas.height/4);
         event.data.forEach(function (rect) {
-          context.strokeStyle = "#0764B7";
-          context.strokeRect(rect.x, rect.y, rect.width, rect.height);
+          if(rect.x<canvas.width/4 || rect.x>canvas.width/2 || rect.y<canvas.height/4 || rect.y>canvas.height/2){
+            return
+          }
+        context.strokeStyle = "#0764B7";
+        context.lineWidth=2;
+        context.strokeRect(rect.x, rect.y, rect.width, rect.height);
 
           context.font = '11px Helvetica';
           context.fillStyle = "#0764B7";
-          context.fillText( _this.predict_user+'  '+ _this.predict_score, rect.x-5, rect.y+rect.height + 11);
-          console.log("catch human face!");
+          context.fillText(_this.predict_user + '  ' + _this.predict_score, rect.x - 5, rect.y + rect.height + 11);
 
           // 上传图片
-          _this.uploadLock && _this.screenshotAndUpload();
+          if (_this.uploadLock) {
+            _this.screenshotAndUpload();
+          }
         });
       });
       //#endregion
@@ -148,13 +164,47 @@ export default {
     // 上传图片
     async screenshotAndUpload() {
       // 上锁避免重复发送请求
+      console.log("catch human face!");
       this.uploadLock = false;
 
       // 绘制当前帧图片转换为base64格式
       // 使用 base64Img 请求接口即可
-      let _=await this.searchFace(this.setImage())
-      if(parseInt(this.predict_score)>70){
-        alert('detecting result:' + this.predict_user + ',\nscore:' + this.predict_score)
+      let shot = this.setImage(),
+        _this = this
+      await this.searchFace(shot)
+
+      if (parseInt(this.predict_score) < 20) {
+        this.thisVideo.srcObject.getTracks()[0].stop();
+        this.$confirm('I do not seem to recognize you,\nwould you please register your face?', 'Alert', {
+          confirmButtonText: '确定',
+          cancelButtonText: '取消',
+          type: 'warning',
+        })
+          .then(() => {
+            _this.tmp = shot
+            _this.visualizeTestDialog(1)
+          })
+          .catch(() => {
+            this.$message({
+              type: 'info',
+              message: '已取消注册',
+            })
+          })
+      }
+      if (parseInt(this.predict_score) > 70) {
+        this.thisVideo.srcObject.getTracks()[0].stop();
+        this.$message({
+          type: 'success',
+          showClose: true,
+          message: 'Welcome, ' + this.predict_user
+        })
+        if (this.predict_user == this.$root.birth_name) {
+          this.$root.birth_login = true;
+          this.$router.push('/birth');
+        }
+        else {
+          this.$router.go(-1)
+        }
       }
 
       // 请求接口成功以后打开锁
@@ -176,8 +226,8 @@ export default {
       return image;// display photo, 赋值并预览图片
     },
     // take photo
-    takePhoto(){
-      this.imgSrc=this.setImage()
+    takePhoto() {
+      this.imgSrc = this.setImage()
 
       // close camera
       this.thisVideo.srcObject.getTracks()[0].stop();
@@ -238,6 +288,11 @@ export default {
       const i = this.formData.pics.findIndex(x => x.pic === filePath)
       // 3.调用splice方法，移除图片信息
       this.formData.splice(i, 1)
+    },
+    addFaceFromCamera() {
+      console.log(this.imgSrc)
+      this.tmp = this.imgSrc
+      this.visualizeTestDialog(1)
     },
     // #endregion
 
@@ -355,10 +410,10 @@ export default {
     // draw binding box
     drawBindingBox(x, y, w, h, rotate) {
       d3.select('svg').append('rect')
-        .attr('x',x+'px')
-        .attr('y',y+'px')
-        .attr('width', w+'px')
-        .attr('height', h+'px')
+        .attr('x', x + 'px')
+        .attr('y', y + 'px')
+        .attr('width', w + 'px')
+        .attr('height', h + 'px')
         .attr('fill', 'none')
         .attr('stroke-width', '2px')
         .attr('stroke', 'blue')
@@ -475,8 +530,10 @@ export default {
           this.predict_user = list[0].user_id
           this.predict_score = list[0].score
         }
+        return obj.error_msg
       }).catch(error => {
         console.log(error)
+        return null
       })
     },
     async getUsers() {

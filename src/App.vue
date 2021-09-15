@@ -1,5 +1,4 @@
 <template>
-
   <div id="nav">
     <router-link to="/">Home👉</router-link> |
     <router-link to="/face_reco">SignIn😎</router-link> |
@@ -7,8 +6,8 @@
     <router-link to="/slider">ShowImage✨</router-link> |
     <router-link to="/birth">Birthday🎉</router-link>
   </div>
-  
-  <router-view/>
+
+  <router-view />
 </template>
 
 <style>
@@ -35,5 +34,16 @@
 </style>
 
 <script>
+export default {
+  data: function () {
+    return {
+      // lottery
+      birth_name: 'linda',
+      birth_finished: false,
+      birth_login: false,
+
+    };
+  },
+};
 </script>
 

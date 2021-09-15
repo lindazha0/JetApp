@@ -21,7 +21,7 @@
 
     <!-- interaction -->
     <el-dialog title="Birthday Reminder" v-model="dialogVisible">
-      <p>今日寿星：{{birthName}}
+      <p>今日寿星：{{ $root.birth_name }}
             生日快乐！<br/>快提醒他去抽奖😍</p>
       <template #footer>
         <span class="dialog-footer">
@@ -43,10 +43,9 @@
 <script>
 import { ElMessage } from "element-plus";
 export default {
-  name: "sudoku",
   data() {
     return {
-      dialogVisible: true,
+      dialogVisible: false,
       gift: require("../assets/gift.png"),
       imgs: [
         {
@@ -89,8 +88,12 @@ export default {
       curSelect: null,
     };
   },
-  components: {},
+  components: {
+  },
   mounted() {
+    if(this.$root.birth_login==false){
+      this.dialogVisible=true
+    }
   },
   methods: {
     // dialog message part
@@ -110,14 +113,22 @@ export default {
     },
     // lottery part
     selectGift(e) {
+      if(this.$root.birth_finished){
+        this.$message('You have finished your birthday lottery. \nEnjoy your day ❀')
+        return
+      }
       var that = this;
       that.curSelect = e;
     },
     submit() {
+      if(this.$root.birth_finished){
+        this.$message('You have finished your birthday lottery. \nEnjoy your day ❀')
+        return
+      }
       if (this.curSelect == null) alert("You haven't choose a gift!");
       else {
         var sub = confirm("Are you sure?\nYou have only one choice!");
-        console.log(sub);
+        // console.log(sub);
         if (sub) {
           const rand = parseInt(Math.random() * 7 + 1);
           const msg =
@@ -127,12 +138,13 @@ export default {
             this.imgs[rand].name +
             ",\nHappy Birthday!😀";
           alert(msg);
+          this.$root.birth_finished=true;
         }
       }
     },
     open() {
       this.$confirm(
-        `今日寿星：${this.birthName}
+        `今日寿星：${this.$root.birth_name}
             生日快乐！\n快提醒他去抽奖😍`,
         "生日提醒",
         {

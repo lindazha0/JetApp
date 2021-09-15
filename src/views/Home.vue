@@ -4,11 +4,9 @@
     <HelloWorld msg="Welcome to Linda's Jetson Nano App! 😊" />
 
     <!-- for birthday reminder -->
-    <p type="text" @click="dialogVisible = true">
-      让我看看今天过生日的人是谁(￣▽￣)"
-    </p>
+    <p type="text" @click="checkBirth">让我看看今天过生日的人是谁(￣▽￣)"</p>
     <el-dialog title="Birthday Reminder" v-model="dialogVisible">
-      <p>今日寿星：{{ birthName }} 生日快乐！<br />快提醒他去抽奖😍</p>
+      <p>今日寿星：{{ $root.birth_name }} 生日快乐！<br />快提醒他去抽奖😍</p>
       <template #footer>
         <span class="dialog-footer">
           <router-link to="/face_reco">
@@ -59,12 +57,6 @@ export default {
   mounted() {
     //播放吃饭
     this.timer = setInterval(this.checkTime, 30000);
-    // console.log(this.birthName)
-    // if (!this.birthLottery) {
-    //   alert("Today is" + this.birthName + "'s Birthday!!");
-    //   this.birthName = "大面包";
-    //   this.birthLottery=true;
-    // }
   },
   beforeDestroy() {
     clearInterval(this.timer);
@@ -83,6 +75,15 @@ export default {
         showClose: true,
         message: "快去告诉他这个好消息吧!",
       });
+    },
+    checkBirth() {
+      if (this.$root.birth_finished) {
+        this.$message(
+          "You have finished your birthday lottery. \nEnjoy your day ❀"
+        );
+        return;
+      }
+      this.dialogVisible = true;
     },
     checkTime() {
       var now = new Date();

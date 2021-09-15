@@ -35,8 +35,8 @@
         <br />
         <img :src="imgSrc" alt class="tx_img" id="cut_img" />
         <br />
-        <el-button type="success" @click="getFaceDetect"> 打卡 </el-button>
-        <el-button type="success" @click="toSave"> 保存靓照 </el-button>
+        <el-button type="success" @click="addFaceFromCamera"> 录用人脸 </el-button>
+        <el-button type="success" @click="toSave"> 保存照片 </el-button>
         <el-button type="success" @click="deleteImage()"> 删除</el-button>
       </div>
 
@@ -55,6 +55,7 @@
       </el-dropdown>
     </div>
 
+    <!-- interaction -->
     <el-dialog title="注册人脸信息" v-model="dialogVisible['1']">
       <input
         type="file"
@@ -92,10 +93,10 @@
       <div class='detectFace'>
       <el-image
         id="searchImage"
-          style="z-index: 2"
-        class="el-image__inner inDetectFace"
+        fit="cover"
+        v-if="tmp"
         :src="tmp"
-        :style="{ display: displayUploadImg }"
+        class="inDetectFace"
       ></el-image>
       <svg class='inDetectFace' style="z-index: 3" width="300px" height="300px"></svg>
       </div>
@@ -129,7 +130,7 @@
           icon="el-icon-plus"
           circle
           type="success"
-          @click="visualizeTestDialog('1')"
+          @click="visualizeTestDialog('1');user_id=selected_user_id"
         ></el-button>
         <!-- <template #prepend class="prepend"> user_id: </template> -->
       </div>
@@ -188,16 +189,33 @@
       ></el-button>
       <br />
       <div class='detectFace'>
-      <el-image
+     <el-image
         id="searchImage"
-          style="z-index: 2"
-        class="el-image__inner inDetectFace"
+        fit="cover"
+        v-if="tmp"
         :src="tmp"
-        :style="{ display: displayUploadImg }"
+        class="inDetectFace"
       ></el-image>
-      <svg class='inDetectFace' style="z-index: 3" width="300px" height="300px"></svg>
+      <svg class='inDetectFace' style="z-index: 3"></svg>
       </div>
     </el-dialog>
+
+    <!-- <el-dialog title="Login success" v-model="dialogVisible['4']">
+      <p>今日寿星：{{birthName}}
+            生日快乐！<br/>快提醒他去抽奖😍</p>
+      <template #footer>
+        <span class="dialog-footer">
+          <router-link to="/face_reco">
+          <el-button type="primary" @click="1"
+            >去抽奖</el-button
+          >
+          </router-link>
+          <router-link to='/'>
+          <el-button @click="1">去提醒</el-button>
+          </router-link>
+        </span>
+      </template>
+    </el-dialog> -->
   </div>
 </template>
 
@@ -216,21 +234,16 @@
 .prepend {
   width: 80px;
 }
-.el-image__inner {
-  vertical-align: top;
-  width: 200px;
-  margin: auto;
-}
 video,
 canvas {
   margin: auto;
   position: absolute;
   top: 0;
   left: 0;
-  border: #2722 5px solid;
+  border: #3f6b46 5px solid;
 }
 .detectFace{
-  z-index: 1;
+  z-index: 0;
   position: relative;
   margin: auto;
   width: 300px;
@@ -241,6 +254,8 @@ canvas {
   position: absolute;
   left:0;
   top:0;
+  width: 300px;
+  height:300px;
 }
 </style>
 
