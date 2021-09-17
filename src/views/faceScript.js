@@ -175,7 +175,11 @@ export default {
 
       if (parseInt(this.predict_score) < 20) {
         this.thisVideo.srcObject.getTracks()[0].stop();
-        this.$confirm('I do not seem to recognize you,\nwould you please register your face?', 'Alert', {
+        var msg='I do not seem to recognize you,\nwould you please register your face?'
+        var url = `https://tts.baidu.com/text2audio?lan=zh&ie=UTF-8&spd=6&text=${encodeURI(msg)}`;
+      let voice = new Audio(url);
+      voice.play();
+        this.$confirm(msg, 'Alert', {
           confirmButtonText: '确定',
           cancelButtonText: '取消',
           type: 'warning',
@@ -191,13 +195,17 @@ export default {
             })
           })
       }
+      var msg='Welcome, ' + this.predict_user
       if (parseInt(this.predict_score) > 70) {
         this.thisVideo.srcObject.getTracks()[0].stop();
         this.$message({
           type: 'success',
           showClose: true,
-          message: 'Welcome, ' + this.predict_user
+          message: msg
         })
+        var url = `https://tts.baidu.com/text2audio?lan=zh&ie=UTF-8&spd=6&text=${encodeURI(msg)}`;
+      let voice = new Audio(url);
+      voice.play();
         if (this.predict_user == this.$root.birth_name) {
           this.$root.birth_login = true;
           this.$router.push('/birth');
@@ -296,7 +304,7 @@ export default {
     },
     // #endregion
 
-    // # region api interface
+    // #region api interface
     async visualizeTestDialog(id) {
       this.dialogVisible[id] = true
       // console.log(this.dialogVisible)
@@ -418,6 +426,7 @@ export default {
         .attr('stroke-width', '2px')
         .attr('stroke', 'blue')
     },
+    // #endregion
 
     // #region bellow are Baidu face recognition
     async getAccessToken() {
