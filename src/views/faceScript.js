@@ -173,12 +173,10 @@ export default {
         _this = this
       await this.searchFace(shot)
 
-      if (parseInt(this.predict_score) < 20) {
+      if (parseInt(this.predict_score) <= 50) {
         this.thisVideo.srcObject.getTracks()[0].stop();
         var msg='I do not seem to recognize you,\nwould you please register your face?'
-        var url = `https://tts.baidu.com/text2audio?lan=zh&ie=UTF-8&spd=6&text=${encodeURI(msg)}`;
-      let voice = new Audio(url);
-      voice.play();
+        this.playTextAudio(msg)
         this.$confirm(msg, 'Alert', {
           confirmButtonText: '确定',
           cancelButtonText: '取消',
@@ -196,16 +194,14 @@ export default {
           })
       }
       var msg='Welcome, ' + this.predict_user
-      if (parseInt(this.predict_score) > 70) {
+      if (parseInt(this.predict_score) > 50) {
         this.thisVideo.srcObject.getTracks()[0].stop();
         this.$message({
           type: 'success',
           showClose: true,
           message: msg
         })
-        var url = `https://tts.baidu.com/text2audio?lan=zh&ie=UTF-8&spd=6&text=${encodeURI(msg)}`;
-      let voice = new Audio(url);
-      voice.play();
+        this.playTextAudio(msg)
         if (this.predict_user == this.$root.birth_name) {
           this.$root.birth_login = true;
           this.$router.push('/birth');
@@ -217,6 +213,11 @@ export default {
 
       // 请求接口成功以后打开锁
       this.uploadLock = true;
+    },
+    playTextAudio(msg){
+      var url = `https://tts.baidu.com/text2audio?lan=zh&ie=UTF-8&spd=6&text=${encodeURI(msg)}`;
+      let voice = new Audio(url);
+      voice.play();
     },
     //  绘制图片并存为base64（拍照功能）
     setImage() {

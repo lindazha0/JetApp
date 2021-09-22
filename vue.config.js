@@ -7,7 +7,7 @@ module.exports = {
             // 匹配所有以 /api 开头的url
             '/api': {
                 
-                target: 'http://localhost:9092',
+                target: 'http://192.168.103.101:9092',
                 changeOrigin: true,
                 ws: true,
                 pathRewrite: {
