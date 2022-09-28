@@ -1,6 +1,6 @@
 # jetapp
 
-A simple web app using [Vue.js](https://vuejs.org/). The `jetApp` program contains functionalies like face recogenition and management, TTS, image playing, and identity authentification, and deployed on an `jetbot` based on [Nvidia Jetson Nano](https://developer.nvidia.com/embedded/jetson-nano).    
+A simple web app using [Vue.js](https://vuejs.org/). The `jetApp` program contains functionalies like face recogenition and management, TTS, image playing, and identity authentification, and deployed on an `jetbot` based on [Nvidia Jetson Nano](https://developer.nvidia.com/embedded/jetson-nano). Since the full system is developed for a companry I interned, only part of the frontend code could be public here. Only allowed for non-profit purpose.     
 
 ## Overview
 - Baidu and Tencent APIs are used for face dataset management and TTS functionalities.
