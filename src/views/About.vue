@@ -27,13 +27,12 @@
       <div class="pic_list" v-show="imgDatas.length">
         <div v-for="(src, index) in imgDatas" :key="index">
           <!-- <img :src="src" width="80" height="80" alt srcset /> -->
-          <!-- 利用element-ui的图片预览插件 -->
+          <!-- 利用element-plus的图片预览插件 -->
           <el-image
             style="width: 200px; height: 200px"
             :src="src"
             :preview-src-list="imgDatas"
-          >
-          </el-image>
+          />
         </div>
       </div>
     </div>
@@ -52,7 +51,7 @@
 </style>
 
 <script>
-import "element-ui/lib/theme-chalk/index.css";
+import "element-plus/dist/index.css";
 
 export default {
   data() {
